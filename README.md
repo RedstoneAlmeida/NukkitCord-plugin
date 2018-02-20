@@ -1,0 +1,2 @@
+# NukkitCord-plugin
+NukkitCord - Plugin
