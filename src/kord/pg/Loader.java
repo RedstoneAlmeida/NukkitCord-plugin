@@ -54,8 +54,10 @@ public class Loader extends PluginBase implements Listener{
 
     @EventHandler
     public void onCommand(ServerCommandEvent event){
+        if(!event.getCommand().contains("say")) return;
         InformationPacket pk = new InformationPacket();
         pk.message = event.getCommand();
+        pk.serverId = struct.getServerId();
         bungeeServer.getNetwork().putPacket(pk);
     }
 }
