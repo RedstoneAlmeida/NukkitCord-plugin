@@ -46,6 +46,8 @@ public class BungeeServer {
                 pk.slots = plugin.getServer().getMaxPlayers();
                 server.getNetwork().putPacket(pk);
 
+                plugin.getLogger().warning("Conexão criada com " + socket.getInetAddress().getHostAddress());
+
                 tick();
 
                 new Thread(() -> {
@@ -122,10 +124,6 @@ public class BungeeServer {
 
     public void handlePacket(DataPacket packet){
         switch (packet.pid()){
-            case ProtocolInfo.CONNECTION_PACKET:
-                break;
-            case ProtocolInfo.HANDLER_PACKET:
-                break;
             case ProtocolInfo.DISCONNECTION_PACKET:
                 plugin.getServer().shutdown();
                 break;
