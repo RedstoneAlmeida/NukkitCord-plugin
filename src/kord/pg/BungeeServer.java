@@ -9,6 +9,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Created by ASUS on 19/02/2018.
@@ -115,20 +116,23 @@ public class BungeeServer {
         }
     }
 
+    public void dataPacket(DataPacket packet){
+        getNetwork().putPacket(packet);
+    }
+
     public void handlePacket(DataPacket packet){
         switch (packet.pid()){
             case ProtocolInfo.CONNECTION_PACKET:
                 break;
             case ProtocolInfo.HANDLER_PACKET:
-                System.out.println("Recebendo HandlerPacket");
                 break;
             case ProtocolInfo.DISCONNECTION_PACKET:
-                System.out.println("Disconnected");
                 plugin.getServer().shutdown();
                 break;
             case ProtocolInfo.INFORMATION_PACKET:
                 InformationPacket info = (InformationPacket) packet;
-                plugin.getServer().dispatchCommand(new ConsoleCommandSender(), "say " + info.message.replace("say ", ""));
+                if(plugin.getStruct().getServerId() == info.serverId) return;
+                plugin.getServer().broadcastMessage("§d[Server] " + info.message.replace("say ", ""));
                 break;
         }
     }

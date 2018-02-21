@@ -3,12 +3,14 @@ package kord.pg;
 import cn.nukkit.event.EventHandler;
 import cn.nukkit.event.Listener;
 import cn.nukkit.event.player.PlayerCommandPreprocessEvent;
+import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.event.server.ServerCommandEvent;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.Config;
 import kord.pg.network.protocol.ConnectionPacket;
 import kord.pg.network.protocol.DisconnectPacket;
 import kord.pg.network.protocol.InformationPacket;
+import kord.pg.network.protocol.ServerInformationPacket;
 import kord.pg.utils.ConfigStruct;
 
 public class Loader extends PluginBase implements Listener{
@@ -18,6 +20,7 @@ public class Loader extends PluginBase implements Listener{
 
     @Override
     public void onEnable() {
+        this.getDataFolder().mkdir();
         saveDefaultConfig();
         this.struct = new ConfigStruct(getConfig());
         this.struct.set();
@@ -59,5 +62,15 @@ public class Loader extends PluginBase implements Listener{
         pk.message = event.getCommand();
         pk.serverId = struct.getServerId();
         bungeeServer.getNetwork().putPacket(pk);
+    }
+
+    @EventHandler
+    public void onQuery(QueryRegenerateEvent event){
+        if(bungeeServer != null) {
+            ServerInformationPacket pk = new ServerInformationPacket();
+            pk.serverId = struct.getServerId();
+            pk.onlinePlayers = event.getPlayerCount();
+            bungeeServer.dataPacket(pk);
+        }
     }
 }
